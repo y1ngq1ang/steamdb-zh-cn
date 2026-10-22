@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SteamDB 简体中文汉化
 // @namespace    https://steamdb.info/
-// @version      1.2.0
+// @version      1.3.0
 // @description  将 SteamDB 的固定界面字段汉化为简体中文，并将游戏名称替换为 Steam 简体中文商店中的官方中文名
 // @author       Cherry Assistant
 // @match        https://steamdb.info/*
@@ -384,6 +384,71 @@
     ['Renamed on store', '商店改名'],
     ['New:', '新增：'],
 
+    /* —— 用户菜单 / 首页模块 —— */
+    ['Your Games', '你的游戏'],
+    ['Your Wishlist', '你的愿望单'],
+    ['Your Watchlist', '你的关注列表'],
+    ['Your Profile', '你的个人资料'],
+    ['Sign out', '退出登录'],
+    ['Menu', '菜单'],
+    ['Calendar', '日历'],
+    ['Support us', '支持我们'],
+    ['Skip to content', '跳到主要内容'],
+    ['Socials', '社交媒体'],
+    ['Steam group', 'Steam 组'],
+    ['Steam curator', 'Steam 鉴赏家'],
+    ['POPULAR TODAY', '今日热门'],
+    ['Trending on SteamDB', 'SteamDB 热门'],
+    ['FAQ & help', '常见问题与帮助'],
+    ['Donate & contribute', '捐赠与参与贡献'],
+    ['Sales & Deals', '特惠与促销'],
+    ['Badges leaderboard', '徽章排行榜'],
+    ['Engines & technologies', '引擎与技术'],
+    ['Frequently asked questions', '常见问题'],
+    ['Database of everything on Steam.', 'Steam 上所有内容的数据库。'],
+    ['All times on the site are UTC.', '本站所有时间均为 UTC。'],
+    ['toggle this menu', '切换此菜单'],
+    ['focus search', '聚焦搜索'],
+    ['or', '或'],
+    ['and', '和'],
+    ['Steam Sale Events', 'Steam 特惠活动'],
+    ['Browse all deals', '浏览全部特惠'],
+    ['View all sale events…', '查看全部特惠活动…'],
+    ['Steam News Pop-ups', 'Steam 新闻弹窗'],
+    ['View all popups…', '查看全部弹窗…'],
+    ['View countdown…', '查看倒计时…'],
+    ['SteamDB in numbers', 'SteamDB 数据一览'],
+    ['apps in database', '数据库中的应用数'],
+    ['packages in database', '数据库中的包数'],
+    ['bundles in database', '数据库中的捆绑包数'],
+    ['releases this year', '今年发售数'],
+    ['Recent app events', '最近的应用动态'],
+    ['Recent package events', '最近的包动态'],
+    ['View more app history entries…', '查看更多应用历史…'],
+    ['View more package history entries…', '查看更多包历史…'],
+    ['Swipe right on a game to view details.', '右滑游戏卡片查看详情。'],
+    ['Next →', '下一页 →'],
+    ['Open link', '打开链接'],
+    ['Close ×', '关闭 ×'],
+    ['Fair use disclaimer', '合理使用声明'],
+    ['Privacy', '隐私'],
+    ['Support SteamDB', '支持 SteamDB'],
+    ['Ad-free Steam data for everyone since 2012', '自 2012 年起为所有人提供无广告的 Steam 数据'],
+    ['Enable JavaScript', '请启用 JavaScript'],
+    ['Browse and filter current deals…', '浏览并筛选当前特惠…'],
+
+    /* —— 即时搜索提示 —— */
+    ['Use slash key (', '按斜杠键（'],
+    ['Use arrow keys (', '使用方向键（'],
+    ['Use escape (', '按 Esc（'],
+    ['to go', '跳转'],
+    ['Enter a steamid (', '输入 steamid（'],
+    ['Any profile link containing', '任何包含以下内容的个人资料链接'],
+    ['Any text containing', '任何包含以下内容的文本'],
+    ['Submit to view all results.', '提交以查看全部结果。'],
+    ['View and filter in instant search.', '在即时搜索中查看并筛选。'],
+    ['Search powered by Algolia', '搜索由 Algolia 提供'],
+
     /* —— 页脚 —— */
     ['Privacy Policy', '隐私政策'],
     ['Terms of Service', '服务条款'],
@@ -462,19 +527,29 @@
     jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8,
     sep: 9, sept: 9, oct: 10, nov: 11, dec: 12
   };
-  const ENDS_DATE_RE = /^ends\s+(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)$/i;
-  const ENDS_IN_RE = new RegExp('^ends\\s+in\\s+(an?|one|\\d+)\\s+(' + UNIT_SRC + ')$', 'i');
+  const ENDS_DATE_RE = /^(ends|starts)\s+(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)(?:\s*,?\s*(\d{4}))?$/i;
+  const ENDS_IN_RE = new RegExp('^(ends|starts)\\s+in\\s+(an?|one|\\d+)\\s+(' + UNIT_SRC + ')$', 'i');
+  const BY_RE = /^By\s+([A-Z][^.!?]{0,39})$/;
 
-  /* 特惠倒计时：Ends 5th January / Ends in 3 days */
+  /* 特惠倒计时：Ends 5th January / Ends 11th December, 2027 / Starts in 3 days / By Some Studio */
   function endsText(text) {
     const s = text.trim();
     let m = ENDS_DATE_RE.exec(s);
     if (m) {
-      const month = MONTHS[m[2].toLowerCase()];
-      if (month) return month + ' 月 ' + parseInt(m[1], 10) + ' 日结束';
+      const month = MONTHS[m[3].toLowerCase()];
+      if (month) {
+        const verb = m[1].toLowerCase() === 'ends' ? '结束' : '开始';
+        const year = m[4] ? m[4] + ' 年 ' : '';
+        return year + month + ' 月 ' + parseInt(m[2], 10) + ' 日' + verb;
+      }
     }
     m = ENDS_IN_RE.exec(s);
-    if (m) return numCN(m[1]) + ' ' + unitCN(m[2]) + '后结束';
+    if (m) {
+      const verb = m[1].toLowerCase() === 'ends' ? '结束' : '开始';
+      return numCN(m[2]) + ' ' + unitCN(m[3]) + '后' + verb;
+    }
+    m = BY_RE.exec(s);
+    if (m) return '由 ' + m[1].trim() + ' 出品';
     return null;
   }
 
