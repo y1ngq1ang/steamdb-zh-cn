@@ -13,6 +13,14 @@
 
 ## 安装
 
+**一键安装**：先装好下面的用户脚本管理器，然后点这里 →
+
+<https://raw.githubusercontent.com/y1ngq1ang/steamdb-zh-cn/main/steamdb-zh-cn.user.js>
+
+管理器会弹出安装页面，确认即可。脚本头部带了 `@updateURL`，之后我更新仓库里的版本时，你的管理器会自动提示升级。
+
+手动安装：
+
 1. 先装一个用户脚本管理器：
    - Chrome / Edge：[Tampermonkey](https://www.tampermonkey.net/) 或 [脚本猫](https://scriptcat.org/)
    - Firefox：[Tampermonkey](https://addons.mozilla.org/firefox/addon/tampermonkey/) 或 [Violentmonkey](https://violentmonkey.github.io/)
@@ -70,3 +78,7 @@ https://store.steampowered.com/api/appdetails?appids=730&filters=basic&l=schines
 | 文件 | 说明 |
 | --- | --- |
 | `steamdb-zh-cn.user.js` | 油猴脚本本体，直接安装即可 |
+| `README.md` | 本说明 |
+| `LICENSE` | MIT 许可证 |
+
+仓库：<https://github.com/y1ngq1ang/steamdb-zh-cn>

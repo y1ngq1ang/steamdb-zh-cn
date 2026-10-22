@@ -7,6 +7,10 @@
 // @match        https://steamdb.info/*
 // @match        https://*.steamdb.info/*
 // @run-at       document-idle
+// @homepageURL  https://github.com/y1ngq1ang/steamdb-zh-cn
+// @supportURL   https://github.com/y1ngq1ang/steamdb-zh-cn/issues
+// @downloadURL  https://raw.githubusercontent.com/y1ngq1ang/steamdb-zh-cn/main/steamdb-zh-cn.user.js
+// @updateURL    https://raw.githubusercontent.com/y1ngq1ang/steamdb-zh-cn/main/steamdb-zh-cn.user.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
 // @connect      store.steampowered.com
